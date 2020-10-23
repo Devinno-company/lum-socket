@@ -78,6 +78,6 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3001, () => {
+server.listen(listen, () => {
     console.log(`---RODANDO NA PORTA ${listen}---`);
 });
