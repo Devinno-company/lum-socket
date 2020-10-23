@@ -28,8 +28,8 @@ const server = _http.createServer();
 const io = SocketIO(server, optionsServer);
 
 io.on('connection', (socket) => {
-    socket.on('post users', async (data: NewUserRequest) => {
-        
+    socket.on('post users', (data: NewUserRequest) => {
+
         makeRequestForLum('/users', 'post', data)
             .then((result: any) => socket.emit('get token', result))
             .catch((err: any) => socket.emit('get token', err));
@@ -40,6 +40,13 @@ io.on('connection', (socket) => {
         makeRequestForLum('/login', 'post', data)
             .then((result: any) => socket.emit('get token', result))
             .catch((err: any) => socket.emit('get token', err));
+    });
+
+    socket.on('get users email', (data: { email: string }) => {
+
+        makeRequestForLum('/users', 'post', data)
+            .then((result: any) => socket.emit('get user email', result))
+            .catch((err: any) => socket.emit('get user email', err));
     });
 
     socket.on('get profile', () => {
