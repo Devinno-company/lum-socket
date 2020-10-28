@@ -78,7 +78,7 @@ io.on('connection', (socket) => {
     socket.on('delete profile', (data: CredentialsRequest) => {
 
         makeRequestForLum('/profile', 'delete', data, token)
-            .then(() => socket.emit('delete profile'))
+            .then(() => socket.emit('get profile'))
             .catch((err: any) => socket.emit('get profile', err));
     });
 
