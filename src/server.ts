@@ -117,6 +117,13 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get invite', err));
     });
 
+    socket.on('delete invite id', (id: number) => {
+
+        makeRequestForLum(`/invites/${id}`, 'patch', undefined, token)
+            .then((result: any) => socket.emit('delete invite', result))
+            .catch((err: any) => socket.emit('delete invite', err));
+    })
+
     socket.on('post events id invite', (id: number, data: InviteUserRequest) => {
 
         makeRequestForLum(`/events/${id}/invite`, 'post', data, token)
@@ -148,8 +155,8 @@ io.on('connection', (socket) => {
     socket.on('delete events id', (id: number) => {
 
         makeRequestForLum(`/events/${id}`, 'delete', undefined, token)
-            .then((result: any) => socket.emit('get event', result))
-            .catch((err: any) => socket.emit('get event', err));
+            .then((result: any) => socket.emit('delete event', result))
+            .catch((err: any) => socket.emit('delete event', err));
     });
 });
 
