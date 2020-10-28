@@ -117,7 +117,7 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get invite', err));
     });
 
-    socket.on('delete invite id', (id: number) => {
+    socket.on('delete invites id', (id: number) => {
 
         makeRequestForLum(`/invites/${id}`, 'patch', undefined, token)
             .then((result: any) => socket.emit('delete invite', result))
