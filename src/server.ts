@@ -119,7 +119,7 @@ io.on('connection', (socket) => {
 
     socket.on('delete invites id', (id: number) => {
 
-        makeRequestForLum(`/invites/${id}`, 'patch', undefined, token)
+        makeRequestForLum(`/invites/${id}`, 'delete', undefined, token)
             .then((result: any) => socket.emit('delete invite', result))
             .catch((err: any) => socket.emit('delete invite', err));
     })
