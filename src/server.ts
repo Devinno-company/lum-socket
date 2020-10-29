@@ -158,11 +158,7 @@ io.on('connection', (socket) => {
             .then((result: any) => socket.emit('delete event', result))
             .catch((err: any) => socket.emit('delete event', err));
     });
-
-    socket.disconnect(true);
-
 });
-
 
 server.listen(listen, () => {
     console.log(`---RODANDO NA PORTA ${listen}---`);
