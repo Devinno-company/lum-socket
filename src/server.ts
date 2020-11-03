@@ -1,10 +1,13 @@
 import _http from 'http';
 import SocketIO from 'socket.io';
 import CredentialsRequest from './interfaces/request/CredentialsRequest';
+import insertMaterial from './interfaces/request/insertMaterial';
 import InviteUserRequest from './interfaces/request/InviteUserRequest';
 import NewEventRequest from './interfaces/request/NewEventRequest';
 import NewUserRequest from './interfaces/request/NewUserRequest';
 import UpdateEventRequest from './interfaces/request/UpdateEventRequest';
+import UpdateMaterialAcquiredRequest from './interfaces/request/UpdateMaterialAcquiredRequest';
+import UpdateMaterialRequest from './interfaces/request/UpdateMaterialRequest';
 import updatePasswordRequest from './interfaces/request/UpdatePasswordRequest';
 import UpdateUserRequest from './interfaces/request/UpdateUserRequest';
 import makeRequestForLum from './utils/makeRequest';
@@ -32,7 +35,7 @@ const io = SocketIO(server, optionsServer);
 
 io.on('connection', (socket) => {
     const token = socket.handshake.headers['x-access-token']?.replace('Bearer ', '');
-
+    // Users
     socket.on('post users', (data: NewUserRequest) => {
 
         makeRequestForLum('/users', 'post', data)
@@ -54,6 +57,7 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get user email', err));
     });
 
+    // Profiles
     socket.on('get profile', () => {
 
         makeRequestForLum('/profile', 'get', undefined, token)
@@ -82,6 +86,7 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get profile', err));
     });
 
+    // Notifications
     socket.on('get notifications', () => {
 
         makeRequestForLum('/notifications', 'get', undefined, token)
@@ -96,6 +101,7 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get notification', err));
     });
 
+    // Invites
     socket.on('get invites', () => {
 
         makeRequestForLum(`/invites`, 'get', undefined, token)
@@ -124,6 +130,7 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('delete invite', err));
     })
 
+    // Events
     socket.on('post events id invite', (id: number, data: InviteUserRequest) => {
 
         makeRequestForLum(`/events/${id}/invite`, 'post', data, token)
@@ -158,6 +165,51 @@ io.on('connection', (socket) => {
             .then((result: any) => socket.emit('delete event', result))
             .catch((err: any) => socket.emit('delete event', err));
     });
+
+    // Materials
+    socket.on('post materials', (idEvent:number, data: insertMaterial) => {
+
+        makeRequestForLum(`/events/${idEvent}/materials`, 'post', data, token)
+            .then((result: any) => socket.emit('get materials', result))
+            .catch((err: any) => socket.emit('get materials', err));
+    });
+
+    socket.on('get materials', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/materials`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get material', result))
+            .catch((err: any) => socket.emit('get material', err));
+    });
+
+    socket.on('get materials id', (idEvent: number, idMaterial: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/materials/${idMaterial}`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get material', result))
+            .catch((err: any) => socket.emit('get material', err));
+    });
+
+    socket.on('put materials acquired id', (idEvent: number, idMaterial: number, data: UpdateMaterialAcquiredRequest) => {
+        
+        makeRequestForLum(`/events/${idEvent}/materials/${idMaterial}/acquired`, 'put', data, token)
+            .then((result: any) => socket.emit('get material', result))
+            .catch((err: any) => socket.emit('get material', err));
+    });
+
+    socket.on('put materials id', (idEvent: number, idMaterial, data: UpdateMaterialRequest) => {
+        
+        makeRequestForLum(`/events/${idEvent}/materials/${idMaterial}`, 'put', data, token)
+            .then((result: any) => socket.emit('get material', result))
+            .catch((err: any) => socket.emit('get material', err));
+    });
+
+    socket.on('delete materials id', (idEvent: number, idMaterial: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/materials/${idMaterial}`, 'delete', undefined, token)
+            .then((result: any) => socket.emit('delete material', result))
+            .catch((err: any) => socket.emit('delete material', err));
+    });
+
+    socket.disconnect(true);
 });
 
 server.listen(listen, () => {
