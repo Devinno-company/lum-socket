@@ -209,7 +209,10 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('delete material', err));
     });
 
-    socket.disconnect(true);
+    socket.on('disconnect', () => {
+        socket.disconnect(true);        
+    });
+    
 });
 
 server.listen(listen, () => {
