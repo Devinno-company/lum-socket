@@ -1,4 +1,4 @@
-interface updatePasswordRequest{
+interface updatePasswordRequest {
     password: string,
     newPassword: string
 }

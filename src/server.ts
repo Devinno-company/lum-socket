@@ -3,6 +3,7 @@ import SocketIO from 'socket.io';
 import CredentialsRequest from './interfaces/request/CredentialsRequest';
 import insertMaterial from './interfaces/request/insertMaterial';
 import InviteUserRequest from './interfaces/request/InviteUserRequest';
+import NewChatRequest from './interfaces/request/NewChatRequest';
 import NewEventRequest from './interfaces/request/NewEventRequest';
 import NewUserRequest from './interfaces/request/NewUserRequest';
 import UpdateEventRequest from './interfaces/request/UpdateEventRequest';
@@ -10,6 +11,8 @@ import UpdateMaterialAcquiredRequest from './interfaces/request/UpdateMaterialAc
 import UpdateMaterialRequest from './interfaces/request/UpdateMaterialRequest';
 import updatePasswordRequest from './interfaces/request/UpdatePasswordRequest';
 import UpdateUserRequest from './interfaces/request/UpdateUserRequest';
+import NotificationResponse from './interfaces/response/NotificationResponse';
+import RoomResponse from './interfaces/response/RoomResponse';
 import makeRequestForLum from './utils/makeRequest';
 
 require('dotenv').config();
@@ -35,18 +38,35 @@ const io = SocketIO(server, optionsServer);
 
 io.on('connection', (socket) => {
     const token = socket.handshake.headers['x-access-token']?.replace('Bearer ', '');
+
+    if (token) {
+        /* Load notifications */
+        makeRequestForLum('/notifications', 'get', undefined, token)
+            .then((result: Array<NotificationResponse>) => socket.emit('get notifications', result))
+            .catch((err: any) => socket.emit('get notifications', err));
+
+        /* Load chats */
+        makeRequestForLum('/chats', 'get', undefined, token)
+            .then((result: Array<RoomResponse>) => {
+                result.map(chat => {
+                    socket.join(`chat-${chat.event_id}-${chat.user_id}`);
+                });
+            })
+            .catch((err: any) => socket.emit('get token', err));
+    }
+
     // Users
     socket.on('post users', (data: NewUserRequest) => {
 
         makeRequestForLum('/users', 'post', data)
-            .then((result: any) => socket.emit('get token', result))
+            .then((result: { token: string }) => socket.emit('get token', result))
             .catch((err: any) => socket.emit('get token', err));
     });
 
     socket.on('post login', (data: CredentialsRequest) => {
 
         makeRequestForLum('/login', 'post', data)
-            .then((result: any) => socket.emit('get token', result))
+            .then((result: {token:string}) => socket.emit('get token', result))
             .catch((err: any) => socket.emit('get token', err));
     });
 
@@ -153,7 +173,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('put events id', (id: number, data: UpdateEventRequest) => {
-        
+
         makeRequestForLum(`/events/${id}`, 'put', data, token)
             .then((result: any) => socket.emit('get event', result))
             .catch((err: any) => socket.emit('get event', err));
@@ -167,7 +187,7 @@ io.on('connection', (socket) => {
     });
 
     // Materials
-    socket.on('post materials', (idEvent:number, data: insertMaterial) => {
+    socket.on('post materials', (idEvent: number, data: insertMaterial) => {
 
         makeRequestForLum(`/events/${idEvent}/materials`, 'post', data, token)
             .then((result: any) => socket.emit('get materials', result))
@@ -189,14 +209,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('put materials acquired id', (idEvent: number, idMaterial: number, data: UpdateMaterialAcquiredRequest) => {
-        
+
         makeRequestForLum(`/events/${idEvent}/materials/${idMaterial}/acquired`, 'put', data, token)
             .then((result: any) => socket.emit('get material', result))
             .catch((err: any) => socket.emit('get material', err));
     });
 
     socket.on('put materials id', (idEvent: number, idMaterial, data: UpdateMaterialRequest) => {
-        
+
         makeRequestForLum(`/events/${idEvent}/materials/${idMaterial}`, 'put', data, token)
             .then((result: any) => socket.emit('get material', result))
             .catch((err: any) => socket.emit('get material', err));
@@ -209,10 +229,62 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('delete material', err));
     });
 
-    socket.on('disconnect', () => {
-        socket.disconnect(true);        
+    socket.on('post newchat', (data: NewChatRequest) => {
+
+        makeRequestForLum('/newChat', 'post', data, token)
+            .then((result: RoomResponse) => {
+                socket.join(`chat-${result.event_id}-${result.user_id}`);
+                socket.to(`chat-${result.event_id}-${result.user_id}`).emit('get room', result)
+            })
+            .catch((err: any) => socket.emit('get room', err));
     });
-    
+
+    socket.on('post chats id', (idChat: number, data: { message: string }) => {
+
+        makeRequestForLum(`/chats/${idChat}`, 'post', data, token)
+            .then((result: RoomResponse) => socket.to(`chat-${result.event_id}-${result.user_id}`).emit('get room', result))
+            .catch((err: any) => socket.emit('get room', err));
+    });
+
+    socket.on('post events id chats id', (idEvent: number, idChat: number, data: { message: string }) => {
+
+        makeRequestForLum(`/events/${idEvent}/chats/${idChat}`, 'post', data, token)
+            .then((result: RoomResponse) => socket.to(`chat-${result.event_id}-${result.user_id}`).emit('get room', result))
+            .catch((err: any) => socket.emit('get room', err));
+    });
+
+    socket.on('get events id chats', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/chats`, 'get', undefined, token)
+            .then((result: RoomResponse) => socket.emit('get event rooms', result))
+            .catch((err: any) => socket.emit('get rooms', err));
+    });
+
+    socket.on('get events id chats id', (idEvent: number, idChat: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/chats/${idChat}`, 'get', undefined, token)
+            .then((result: RoomResponse) => socket.emit('get event room', result))
+            .catch((err: any) => socket.emit('get event room', err));
+    });
+
+    socket.on('get chats', () => {
+
+        makeRequestForLum(`/chats`, 'get', undefined, token)
+            .then((result: RoomResponse) => socket.emit('get rooms', result))
+            .catch((err: any) => socket.emit('get rooms', err));
+    });
+
+    socket.on('get chats id', (idChat: number) => {
+
+        makeRequestForLum(`/chats/${idChat}`, 'get', undefined, token)
+            .then((result: RoomResponse) => socket.emit('get room', result))
+            .catch((err: any) => socket.emit('get room', err));
+    });
+
+    socket.on('disconnect', () => {
+        socket.disconnect(true);
+    });
+
 });
 
 server.listen(listen, () => {

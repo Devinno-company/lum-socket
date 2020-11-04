@@ -1,6 +1,6 @@
 import UpdateLocationEventRequest from "./UpdateLocationEventRequest";
 
-interface UpdateEventRequest {
+interface UpdateEvent {
     name_to?: string,
     description_to?: string,
     date_start_to?: string,
@@ -13,4 +13,4 @@ interface UpdateEventRequest {
     category_to?: string
 }
 
-export default UpdateEventRequest;
+export default UpdateEvent;

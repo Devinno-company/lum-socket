@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-async function makeRequestForLum(path: string, method: 'get' | 'post' | 'put' | 'delete' | 'patch', _body?: object, _token?: string) {
+async function makeRequestForLum(path: string, method: 'get' | 'post' | 'put' | 'delete' | 'patch', _body?: object, _token?: string): Promise<any> {
     const serverUri = process.env.SERVER_URI as string;
     
     return new Promise((resolve, reject) => {
