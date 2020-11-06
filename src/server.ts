@@ -2,6 +2,7 @@ import _http from 'http';
 import SocketIO from 'socket.io';
 import CredentialsRequest from './interfaces/request/CredentialsRequest';
 import insertMaterial from './interfaces/request/insertMaterial';
+import insertTime from './interfaces/request/insertTime';
 import InviteUserRequest from './interfaces/request/InviteUserRequest';
 import NewChatRequest from './interfaces/request/NewChatRequest';
 import NewEventRequest from './interfaces/request/NewEventRequest';
@@ -10,6 +11,7 @@ import UpdateEventRequest from './interfaces/request/UpdateEventRequest';
 import UpdateMaterialAcquiredRequest from './interfaces/request/UpdateMaterialAcquiredRequest';
 import UpdateMaterialRequest from './interfaces/request/UpdateMaterialRequest';
 import updatePasswordRequest from './interfaces/request/UpdatePasswordRequest';
+import UpdateTimeRequest from './interfaces/request/UpdateTimeRequest';
 import UpdateUserRequest from './interfaces/request/UpdateUserRequest';
 import NotificationResponse from './interfaces/response/NotificationResponse';
 import RoomResponse from './interfaces/response/RoomResponse';
@@ -229,6 +231,7 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('delete material', err));
     });
 
+    // Chats
     socket.on('post newchat', (data: NewChatRequest) => {
 
         makeRequestForLum('/newChat', 'post', data, token)
@@ -281,6 +284,43 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get room', err));
     });
 
+    // Times
+    socket.on('post times', (idEvent:number, data: insertTime) => {
+
+        makeRequestForLum(`/events/${idEvent}/times`, 'post', data, token)
+            .then((result: any) => socket.emit('get time', result))
+            .catch((err: any) => socket.emit('get time', err));
+    });
+
+    socket.on('get times', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/times`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get time', result))
+            .catch((err: any) => socket.emit('get time', err));
+    });
+
+    socket.on('get times id', (idEvent: number, idTime: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/times/${idTime}`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get time', result))
+            .catch((err: any) => socket.emit('get time', err));
+    });
+
+    socket.on('put times id', (idEvent: number, idTime: number, data: UpdateTimeRequest) => {
+        
+        makeRequestForLum(`/events/${idEvent}/times/${idTime}`, 'put', data, token)
+            .then((result: any) => socket.emit('get time', result))
+            .catch((err: any) => socket.emit('get time', err));
+    });
+
+    socket.on('delete times id', (idEvent: number, idTime: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/times/${idTime}`, 'delete', undefined, token)
+            .then((result: any) => socket.emit('delete time', result))
+            .catch((err: any) => socket.emit('delete time', err));
+    });
+
+    // Others
     socket.on('disconnect', () => {
         socket.disconnect(true);
     });
