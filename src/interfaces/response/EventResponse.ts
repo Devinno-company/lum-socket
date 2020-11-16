@@ -8,6 +8,7 @@ interface EventResponse {
     end_date: string,
     start_time?: string,
     end_time?: string,
+    im_banner?: string,
     type?: string,
     location: {
         street: string,

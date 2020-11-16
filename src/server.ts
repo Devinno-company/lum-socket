@@ -167,6 +167,13 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get event', err));
     });
 
+    socket.on('get events', () => {
+
+        makeRequestForLum(`/events`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get events', result))
+            .catch((err: any) => socket.emit('get events', err));
+    });
+
     socket.on('get events id', (id: number) => {
 
         makeRequestForLum(`/events/${id}`, 'get', undefined, token)
