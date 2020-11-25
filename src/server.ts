@@ -199,6 +199,12 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('delete event', err));
     });
 
+    socket.on('quit events id', (idEvent: number, data: { id_newCreator?: number }) => {
+        makeRequestForLum(`/events/${idEvent}/quit`, 'patch', data, token)
+            .then((result: any) => socket.emit('quit event', result))
+            .catch((err: any) => socket.emit('quit event', err));
+    })
+
     // Materials
     socket.on('post materials', (idEvent: number, data: insertMaterial) => {
 
