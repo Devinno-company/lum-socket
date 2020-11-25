@@ -6,11 +6,13 @@ import insertTime from './interfaces/request/insertTime';
 import InviteUserRequest from './interfaces/request/InviteUserRequest';
 import NewChatRequest from './interfaces/request/NewChatRequest';
 import NewEventRequest from './interfaces/request/NewEventRequest';
+import NewNoticeRequest from './interfaces/request/NewNoticeRequest';
 import NewTaskRequest from './interfaces/request/NewTaskRequest';
 import NewUserRequest from './interfaces/request/NewUserRequest';
 import UpdateEventRequest from './interfaces/request/UpdateEventRequest';
 import UpdateMaterialAcquiredRequest from './interfaces/request/UpdateMaterialAcquiredRequest';
 import UpdateMaterialRequest from './interfaces/request/UpdateMaterialRequest';
+import UpdateNoticeRequest from './interfaces/request/UpdateNoticeRequest';
 import updatePasswordRequest from './interfaces/request/UpdatePasswordRequest';
 import UpdateTaskRequest from './interfaces/request/UpdateTaskRequest';
 import UpdateTimeRequest from './interfaces/request/UpdateTimeRequest';
@@ -384,6 +386,43 @@ io.on('connection', (socket) => {
         makeRequestForLum(`/events/${idEvent}/tasks/${idTask}/unassign`, 'patch', undefined, token)
             .then((result: any) => socket.emit('get task', result))
             .catch((err: any) => socket.emit('get task', err));
+    });
+
+    // Notices
+    // Tasks
+    socket.on('post notices', (idEvent: number, data: NewNoticeRequest) => {
+
+        makeRequestForLum(`/events/${idEvent}/notices`, 'post', data, token)
+            .then((result: any) => socket.emit('get notice', result))
+            .catch((err: any) => socket.emit('get notice', err));
+    });
+
+    socket.on('get notices', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/notices`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get notices', result))
+            .catch((err: any) => socket.emit('get notices', err));
+    });
+
+    socket.on('get notices id', (idEvent: number, idNotice: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/notices/${idNotice}`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get notice', result))
+            .catch((err: any) => socket.emit('get notice', err));
+    });
+
+    socket.on('put notices id', (idEvent: number, idNotice: number, data: UpdateNoticeRequest) => {
+        
+        makeRequestForLum(`/events/${idEvent}/notices/${idNotice}`, 'put', data, token)
+            .then((result: any) => socket.emit('get notice', result))
+            .catch((err: any) => socket.emit('get notice', err));
+    });
+
+    socket.on('delete notices id', (idEvent: number, idNotice: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/notices/${idNotice}`, 'delete', undefined, token)
+            .then((result: any) => socket.emit('delete notice', result))
+            .catch((err: any) => socket.emit('delete notice', err));
     });
 
     // Others
