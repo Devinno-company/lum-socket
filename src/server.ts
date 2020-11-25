@@ -6,11 +6,13 @@ import insertTime from './interfaces/request/insertTime';
 import InviteUserRequest from './interfaces/request/InviteUserRequest';
 import NewChatRequest from './interfaces/request/NewChatRequest';
 import NewEventRequest from './interfaces/request/NewEventRequest';
+import NewTaskRequest from './interfaces/request/NewTaskRequest';
 import NewUserRequest from './interfaces/request/NewUserRequest';
 import UpdateEventRequest from './interfaces/request/UpdateEventRequest';
 import UpdateMaterialAcquiredRequest from './interfaces/request/UpdateMaterialAcquiredRequest';
 import UpdateMaterialRequest from './interfaces/request/UpdateMaterialRequest';
 import updatePasswordRequest from './interfaces/request/UpdatePasswordRequest';
+import UpdateTaskRequest from './interfaces/request/UpdateTaskRequest';
 import UpdateTimeRequest from './interfaces/request/UpdateTimeRequest';
 import UpdateUserRequest from './interfaces/request/UpdateUserRequest';
 import NotificationResponse from './interfaces/response/NotificationResponse';
@@ -325,6 +327,63 @@ io.on('connection', (socket) => {
         makeRequestForLum(`/events/${idEvent}/times/${idTime}`, 'delete', undefined, token)
             .then((result: any) => socket.emit('delete time', result))
             .catch((err: any) => socket.emit('delete time', err));
+    });
+
+    // Tasks
+    socket.on('post tasks', (idEvent: number, data: NewTaskRequest) => {
+
+        makeRequestForLum(`/events/${idEvent}/tasks`, 'post', data, token)
+            .then((result: any) => socket.emit('get task', result))
+            .catch((err: any) => socket.emit('get task', err));
+    });
+
+    socket.on('get tasks', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tasks`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get tasks', result))
+            .catch((err: any) => socket.emit('get tasks', err));
+    });
+
+    socket.on('get tasks id', (idEvent: number, idTask: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tasks/${idTask}`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get task', result))
+            .catch((err: any) => socket.emit('get task', err));
+    });
+
+    socket.on('put tasks id', (idEvent: number, idTask: number, data: UpdateTaskRequest) => {
+        
+        makeRequestForLum(`/events/${idEvent}/tasks/${idTask}`, 'put', data, token)
+            .then((result: any) => socket.emit('get task', result))
+            .catch((err: any) => socket.emit('get task', err));
+    });
+
+    socket.on('delete tasks id', (idEvent: number, idTask: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tasks/${idTask}`, 'delete', undefined, token)
+            .then((result: any) => socket.emit('delete task', result))
+            .catch((err: any) => socket.emit('delete task', err));
+    });
+
+    socket.on('patch tasks id', (idEvent: number, idTask: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tasks/${idTask}`, 'patch', undefined, token)
+            .then((result: any) => socket.emit('get task', result))
+            .catch((err: any) => socket.emit('get task', err));
+    });
+
+    socket.on('patch tasks assign id', (idEvent: number, idTask: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tasks/${idTask}/assign`, 'patch', undefined, token)
+            .then((result: any) => socket.emit('get task', result))
+            .catch((err: any) => socket.emit('get task', err));
+    });
+
+    socket.on('patch tasks unassign id', (idEvent: number, idTask: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tasks/${idTask}/unassign`, 'patch', undefined, token)
+            .then((result: any) => socket.emit('get task', result))
+            .catch((err: any) => socket.emit('get task', err));
     });
 
     // Others
