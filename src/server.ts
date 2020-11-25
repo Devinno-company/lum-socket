@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
     socket.on('post login', (data: CredentialsRequest) => {
 
         makeRequestForLum('/login', 'post', data)
-            .then((result: {token:string}) => socket.emit('get token', result))
+            .then((result: { token: string }) => socket.emit('get token', result))
             .catch((err: any) => socket.emit('get token', err));
     });
 
@@ -296,7 +296,7 @@ io.on('connection', (socket) => {
     });
 
     // Times
-    socket.on('post times', (idEvent:number, data: insertTime) => {
+    socket.on('post times', (idEvent: number, data: insertTime) => {
 
         makeRequestForLum(`/events/${idEvent}/times`, 'post', data, token)
             .then((result: any) => socket.emit('get time', result))
@@ -318,7 +318,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('put times id', (idEvent: number, idTime: number, data: UpdateTimeRequest) => {
-        
+
         makeRequestForLum(`/events/${idEvent}/times/${idTime}`, 'put', data, token)
             .then((result: any) => socket.emit('get time', result))
             .catch((err: any) => socket.emit('get time', err));
@@ -354,7 +354,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('put tasks id', (idEvent: number, idTask: number, data: UpdateTaskRequest) => {
-        
+
         makeRequestForLum(`/events/${idEvent}/tasks/${idTask}`, 'put', data, token)
             .then((result: any) => socket.emit('get task', result))
             .catch((err: any) => socket.emit('get task', err));
@@ -412,7 +412,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('put notices id', (idEvent: number, idNotice: number, data: UpdateNoticeRequest) => {
-        
+
         makeRequestForLum(`/events/${idEvent}/notices/${idNotice}`, 'put', data, token)
             .then((result: any) => socket.emit('get notice', result))
             .catch((err: any) => socket.emit('get notice', err));
@@ -423,6 +423,35 @@ io.on('connection', (socket) => {
         makeRequestForLum(`/events/${idEvent}/notices/${idNotice}`, 'delete', undefined, token)
             .then((result: any) => socket.emit('delete notice', result))
             .catch((err: any) => socket.emit('delete notice', err));
+    });
+
+    // Team
+    socket.on('get team', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/team`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get team', result))
+            .catch((err: any) => socket.emit('get team', err));
+    });
+
+    socket.on('get team id', (idEvent: number, idTeamMember: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/team/${idTeamMember}`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get team member', result))
+            .catch((err: any) => socket.emit('get team member', err));
+    });
+
+    socket.on('patch team id', (idEvent: number, idTeamMember: number, data: { role_to: string }) => {
+
+        makeRequestForLum(`/events/${idEvent}/team/${idTeamMember}`, 'patch', data, token)
+            .then((result: any) => socket.emit('get team member', result))
+            .catch((err: any) => socket.emit('get team member', err));
+    });
+
+    socket.on('delete team id', (idEvent: number, idTeamMember: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/team/${idTeamMember}`, 'delete', undefined, token)
+            .then((result: any) => socket.emit('delete team member', result))
+            .catch((err: any) => socket.emit('delete team member', err));
     });
 
     // Others
