@@ -78,7 +78,7 @@ io.on('connection', (socket) => {
 
     socket.on('get users email', (email: string) => {
         const data = { email };
-        makeRequestForLum('/users', 'post', data)
+        makeRequestForLum('/users', 'get', data)
             .then((result: any) => socket.emit('get user email', result))
             .catch((err: any) => socket.emit('get user email', err));
     });
