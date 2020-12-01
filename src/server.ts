@@ -209,15 +209,15 @@ io.on('connection', (socket) => {
     socket.on('post materials', (idEvent: number, data: insertMaterial) => {
 
         makeRequestForLum(`/events/${idEvent}/materials`, 'post', data, token)
-            .then((result: any) => socket.emit('get materials', result))
-            .catch((err: any) => socket.emit('get materials', err));
+            .then((result: any) => socket.emit('get material', result))
+            .catch((err: any) => socket.emit('get material', err));
     });
 
     socket.on('get materials', (idEvent: number) => {
 
         makeRequestForLum(`/events/${idEvent}/materials`, 'get', undefined, token)
-            .then((result: any) => socket.emit('get material', result))
-            .catch((err: any) => socket.emit('get material', err));
+            .then((result: any) => socket.emit('get materials', result))
+            .catch((err: any) => socket.emit('get materials', err));
     });
 
     socket.on('get materials id', (idEvent: number, idMaterial: number) => {
