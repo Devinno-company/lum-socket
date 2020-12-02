@@ -310,6 +310,21 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get room', err));
     });
 
+    // Purchases
+    socket.on('get purchases', () => {
+
+        makeRequestForLum(`/purchases`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get purchases', result))
+            .catch((err: any) => socket.emit('get purchases', err));
+    });
+
+    socket.on('get purchases id', (idPurchase: number) => {
+
+        makeRequestForLum(`/purchases/${idPurchase}`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get purchase', result))
+            .catch((err: any) => socket.emit('get purchase', err));
+    });
+
     // Times
     socket.on('post times', (idEvent: number, data: insertTime) => {
 
