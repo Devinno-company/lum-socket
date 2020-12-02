@@ -9,6 +9,7 @@ import NewEventRequest from './interfaces/request/NewEventRequest';
 import NewNoticeRequest from './interfaces/request/NewNoticeRequest';
 import NewTaskRequest from './interfaces/request/NewTaskRequest';
 import NewUserRequest from './interfaces/request/NewUserRequest';
+import SearchEvents from './interfaces/request/SearchEvents';
 import UpdateEventRequest from './interfaces/request/UpdateEventRequest';
 import UpdateMaterialAcquiredRequest from './interfaces/request/UpdateMaterialAcquiredRequest';
 import UpdateMaterialRequest from './interfaces/request/UpdateMaterialRequest';
@@ -205,6 +206,14 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('quit event', err));
     })
 
+    // Search events
+    socket.on('get search events', (params: SearchEvents) => {
+
+        makeRequestForLum(`/search_events?name=${params.name}&city=${params.city}&uf=${params.uf}&distance=${params.distance}`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get search events', result))
+            .catch((err: any) => socket.emit('get search events', err));
+    })
+
     // Materials
     socket.on('post materials', (idEvent: number, data: insertMaterial) => {
 
@@ -234,7 +243,7 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get material', err));
     });
 
-    socket.on('put materials id', (idEvent: number, idMaterial, data: UpdateMaterialRequest) => {
+    socket.on('put materials id', (idEvent: number, idMaterial: number, data: UpdateMaterialRequest) => {
 
         makeRequestForLum(`/events/${idEvent}/materials/${idMaterial}`, 'put', data, token)
             .then((result: any) => socket.emit('get material', result))
