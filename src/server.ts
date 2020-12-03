@@ -8,6 +8,7 @@ import NewChatRequest from './interfaces/request/NewChatRequest';
 import NewEventRequest from './interfaces/request/NewEventRequest';
 import NewNoticeRequest from './interfaces/request/NewNoticeRequest';
 import NewTaskRequest from './interfaces/request/NewTaskRequest';
+import NewTicketRequest from './interfaces/request/NewTicketRequest';
 import NewUserRequest from './interfaces/request/NewUserRequest';
 import SearchEvents from './interfaces/request/SearchEvents';
 import UpdateEventRequest from './interfaces/request/UpdateEventRequest';
@@ -16,6 +17,7 @@ import UpdateMaterialRequest from './interfaces/request/UpdateMaterialRequest';
 import UpdateNoticeRequest from './interfaces/request/UpdateNoticeRequest';
 import updatePasswordRequest from './interfaces/request/UpdatePasswordRequest';
 import UpdateTaskRequest from './interfaces/request/UpdateTaskRequest';
+import UpdateTicketRequest from './interfaces/request/UpdateTicketRequest';
 import UpdateTimeRequest from './interfaces/request/UpdateTimeRequest';
 import UpdateUserRequest from './interfaces/request/UpdateUserRequest';
 import NotificationResponse from './interfaces/response/NotificationResponse';
@@ -482,6 +484,43 @@ io.on('connection', (socket) => {
         makeRequestForLum(`/events/${idEvent}/team/${idTeamMember}`, 'delete', undefined, token)
             .then((result: any) => socket.emit('delete team member', result))
             .catch((err: any) => socket.emit('delete team member', err));
+    });
+
+    //Tickets
+
+    socket.on('post tickets', (idEvent: number, data: NewTicketRequest) => {
+
+        makeRequestForLum(`/events/${idEvent}/tickets`, 'post', data, token)
+            .then((result: any) => socket.emit('get ticket', result))
+            .catch((err: any) => socket.emit('get ticket', err));
+    });
+
+    socket.on('get tickets', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tickets`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get tickets', result))
+            .catch((err: any) => socket.emit('get tickets', err));
+    });
+
+    socket.on('get tickets id', (idEvent: number, idTicket: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tickets/${idTicket}`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get ticket', result))
+            .catch((err: any) => socket.emit('get ticket', err));
+    });
+
+    socket.on('put tickets id', (idEvent: number, idTicket: number, data: UpdateTicketRequest) => {
+
+        makeRequestForLum(`/events/${idEvent}/tickets/${idTicket}`, 'put', data, token)
+            .then((result: any) => socket.emit('get ticket', result))
+            .catch((err: any) => socket.emit('get ticket', err));
+    });
+
+    socket.on('delete tickets id', (idEvent: number, idTicket: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/tickets/${idTicket}`, 'delete', undefined, token)
+            .then((result: any) => socket.emit('delete ticket', result))
+            .catch((err: any) => socket.emit('delete ticket', err));
     });
 
     // Others
