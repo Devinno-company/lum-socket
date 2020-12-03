@@ -104,8 +104,8 @@ io.on('connection', (socket) => {
     socket.on('patch profile', (data: updatePasswordRequest) => {
 
         makeRequestForLum('/profile', 'patch', data, token)
-            .then(() => socket.emit('get profile'))
-            .catch((err: any) => socket.emit('get profile', err));
+            .then(() => socket.emit('patch profile'))
+            .catch((err: any) => socket.emit('patch profile', err));
     });
 
     socket.on('delete profile', (data: CredentialsRequest) => {
