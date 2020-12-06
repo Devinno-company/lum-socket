@@ -208,6 +208,13 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('quit event', err));
     })
 
+    socket.on('post events id link_mercado_pago', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/link_mercado_pago`, 'post', undefined, token)
+            .then((result: any) => socket.emit('get event', result))
+            .catch((err: any) => socket.emit('get event', err));
+    });
+
     // Search events
     socket.on('get search events', (params: SearchEvents) => {
 
