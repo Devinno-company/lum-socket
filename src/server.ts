@@ -345,8 +345,8 @@ io.on('connection', (socket) => {
     socket.on('get times', (idEvent: number) => {
 
         makeRequestForLum(`/events/${idEvent}/times`, 'get', undefined, token)
-            .then((result: any) => socket.emit('get time', result))
-            .catch((err: any) => socket.emit('get time', err));
+            .then((result: any) => socket.emit('get times', result))
+            .catch((err: any) => socket.emit('get times', err));
     });
 
     socket.on('get times id', (idEvent: number, idTime: number) => {

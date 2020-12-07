@@ -1,6 +1,6 @@
 {
   "name": "lum-socket",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "description": "",
   "main": "./src/server.ts",
   "scripts": {
