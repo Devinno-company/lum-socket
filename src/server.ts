@@ -428,7 +428,6 @@ io.on('connection', (socket) => {
     });
 
     // Notices
-    // Tasks
     socket.on('post notices', (idEvent: number, data: NewNoticeRequest) => {
 
         makeRequestForLum(`/events/${idEvent}/notices`, 'post', data, token)
@@ -528,6 +527,22 @@ io.on('connection', (socket) => {
         makeRequestForLum(`/events/${idEvent}/tickets/${idTicket}`, 'delete', undefined, token)
             .then((result: any) => socket.emit('delete ticket', result))
             .catch((err: any) => socket.emit('delete ticket', err));
+    });
+
+    // Dashboards
+
+    socket.on('get events id dashboards', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/dashboards`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get events id dashboards', result))
+            .catch((err: any) => socket.emit('get events id dashboards', err));
+    });
+
+    socket.on('get events id dashboards checkins', (idEvent: number) => {
+
+        makeRequestForLum(`/events/${idEvent}/dashboards/checkins`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get events id dashboards checkins', result))
+            .catch((err: any) => socket.emit('get events id dashboards checkins', err));
     });
 
     // Others
