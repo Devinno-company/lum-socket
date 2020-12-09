@@ -218,7 +218,7 @@ io.on('connection', (socket) => {
     // Search events
     socket.on('get search events', (params: SearchEvents) => {
 
-        makeRequestForLum(`/search_events?name=${params.name}&city=${params.city}&uf=${params.uf}&distance=${params.distance}`, 'get', undefined, token)
+        makeRequestForLum(`/search_events?name=${params.name}&city=${params.city}&uf=${params.uf}&distance=${params.distance}&category=${params.category}`, 'get', undefined, token)
             .then((result: any) => socket.emit('get search events', result))
             .catch((err: any) => socket.emit('get search events', err));
     })
