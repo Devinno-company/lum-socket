@@ -545,6 +545,15 @@ io.on('connection', (socket) => {
             .catch((err: any) => socket.emit('get events id dashboards checkins', err));
     });
 
+    //Checkins
+
+    socket.on('get events id allCheckins', (id: number) => {
+
+        makeRequestForLum(`/events/${id}/allCheckins`, 'get', undefined, token)
+            .then((result: any) => socket.emit('get checkins', result))
+            .catch((err: any) => socket.emit('get checkins', err));
+    });
+
     // Others
     socket.on('disconnect', () => {
         socket.disconnect(true);
